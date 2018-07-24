@@ -8,6 +8,7 @@ class App extends Component {
     super(props);
 
     this.state = {
+      selectedId: -1, //-1 means no selection
       notes: [
         {
           id: 1001,
@@ -30,10 +31,32 @@ class App extends Component {
       <div className="notes-app">
         <SearchBar />
         <DocumentList 
-        allNotes={this.state.notes}/>
-        <DocumentEditor />
+        allNotes={this.state.notes} 
+        handleSelection={this._selectNote}
+        />
+        <DocumentEditor 
+        note={this._getSelectedNote()} 
+        />
       </div>
     );
+  }
+
+
+_getSelectedNote = () => {
+  let theNote = this.state.notes.find(note => note.id === this.state.selectedId);
+  if (!theNote){
+    theNote = this.state.notes[0]
+  }
+  return theNote;
+}
+
+
+  _selectNote = (noteId) => {
+    console.log(noteId);
+    //I want to save the id of the selected note
+    this.setState({
+      selectedId: noteId
+    });
   }
 }
 
