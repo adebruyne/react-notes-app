@@ -30,63 +30,90 @@ class App extends Component {
     return (
       <div className="notes-app">
         <SearchBar />
-        <DocumentList 
-        allNotes={this.state.notes} 
-        handleSelection={this._selectNote} //
+        <DocumentList
+          allNotes={this.state.notes}
+          handleSelection={this._selectNote} //
         />
-        <DocumentEditor 
-        note={this._getSelectedNote()} //this searches for the actual note object as the result
+        <DocumentEditor
+          note={this._getSelectedNote()}
+          handleChange={this._updateNote} //this searches for the actual note object as the result
         />
       </div>
     );
   }
 
+  componentDidMount() {
+    this.setState({
+      selectedId: this.state.notes[0].id
+    });
+  }
 
-_updateNote = (noteContent) => {
-  //grab exisiting note
-  let theNote = this._getSelectedNote();
-  //make a copy
+  _updateNote = noteContent => {
+    //grab exisiting note
+    let theNote = this._getSelectedNote();
+    //make a copy
     //update the copy
 
-  // Version #1: Object.assign
-  // let updatedNote = Object.assign({}, theNote);
-  // updatedNote.content = noteContent;
+    // Version #1: Object.assign
+    // let updatedNote = Object.assign({}, theNote);
+    // updatedNote.content = noteContent;
 
-  //Version #2: sprinkles aka "Object spread"
-  let updatedNote = {
-    ...theNote,
-    content: noteContent
-  }
- 
-  let notesArrayWithUpdatedNote = [
-    ...this._allNotesExceptSelectedNote(),
-    updatedNote
-  ]
-  //set the state
-}
+    //Version #2: sprinkles aka "Object spread"
+    let updatedNote = {
+      ...theNote,
+      content: noteContent
+    };
 
-_allNotesExceptSelectedNote = ()=>{
-  let notesWithoutSelectedNotes = this.state.notes.filter(note => note.id 
-  !== this.state.selectedId);
-  return notesWithoutSelectedNotes;
-}
+    //put the copy of the note in a copt of the array
+    //Version #1
+    //let notesArrayWithUpdatedNote = this.state.notes.map(note => {
+    //   if(note.id === this.state.selectedId ) {
+    //     return updatedNote;
+    //   } else {
+    //     return note;
+    //   }
+    // });
 
-_getSelectedNote = () => {
-  let theNote = this.state.notes.find(note => note.id === this.state.selectedId);
-  if (!theNote){
-    theNote = this.state.notes[0]
-  }
-  return theNote;
-}
+    //Version #2
 
+    let notesArrayWithUpdatedNote = [
+      ...this._allNotesExceptSelectedNote(),
+      updatedNote
+    ];
+    //set the state
+    this.setState({
+      notes: notesArrayWithUpdatedNote
+    });
+  };
 
-  _selectNote = (noteId) => {
+  _allNotesExceptSelectedNote = () => {
+    let selectedId = this.state.selectedId;
+    if (selectedId === -1) {
+      selectedId = this.state.notes[0].id;
+    }
+    let notesWithoutSelectedNotes = this.state.notes.filter(
+      note => note.id !== this.state.selectedId
+    );
+    return notesWithoutSelectedNotes;
+  };
+
+  _getSelectedNote = () => {
+    let theNote = this.state.notes.find(
+      note => note.id === this.state.selectedId
+    );
+    if (!theNote) {
+      theNote = this.state.notes[0];
+    }
+    return theNote;
+  };
+
+  _selectNote = noteId => {
     console.log(noteId);
     //I want to save the id of the selected note
     this.setState({
       selectedId: noteId
     });
-  }
+  };
 }
 
 export default App;
