@@ -32,15 +32,44 @@ class App extends Component {
         <SearchBar />
         <DocumentList 
         allNotes={this.state.notes} 
-        handleSelection={this._selectNote}
+        handleSelection={this._selectNote} //
         />
         <DocumentEditor 
-        note={this._getSelectedNote()} 
+        note={this._getSelectedNote()} //this searches for the actual note object as the result
         />
       </div>
     );
   }
 
+
+_updateNote = (noteContent) => {
+  //grab exisiting note
+  let theNote = this._getSelectedNote();
+  //make a copy
+    //update the copy
+
+  // Version #1: Object.assign
+  // let updatedNote = Object.assign({}, theNote);
+  // updatedNote.content = noteContent;
+
+  //Version #2: sprinkles aka "Object spread"
+  let updatedNote = {
+    ...theNote,
+    content: noteContent
+  }
+ 
+  let notesArrayWithUpdatedNote = [
+    ...this._allNotesExceptSelectedNote(),
+    updatedNote
+  ]
+  //set the state
+}
+
+_allNotesExceptSelectedNote = ()=>{
+  let notesWithoutSelectedNotes = this.state.notes.filter(note => note.id 
+  !== this.state.selectedId);
+  return notesWithoutSelectedNotes;
+}
 
 _getSelectedNote = () => {
   let theNote = this.state.notes.find(note => note.id === this.state.selectedId);
