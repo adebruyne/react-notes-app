@@ -8,6 +8,7 @@ class App extends Component {
     super(props);
 
     this.state = {
+      searchText:'',
       selectedId: -1, //-1 means no selection
       notes: [
         {
@@ -29,9 +30,11 @@ class App extends Component {
   render() {
     return (
       <div className="notes-app">
-        <SearchBar />
+        <SearchBar 
+        text={this.state.searchText}
+        handleChange={this._updateSearchText}/>
         <DocumentList
-          allNotes={this.state.notes}
+          allNotes={this._getFilteredNotes()}
           handleSelection={this._selectNote} //
         />
         <DocumentEditor
@@ -46,6 +49,12 @@ class App extends Component {
     this.setState({
       selectedId: this.state.notes[0].id
     });
+  }
+
+  _updateSearchText = (newSearchText) => {
+      this.setState({
+        searchText: newSearchText
+      })
   }
 
   _updateNote = noteContent => {
@@ -96,6 +105,26 @@ class App extends Component {
     );
     return notesWithoutSelectedNotes;
   };
+
+  _getFilteredNotes = () => {
+    //is there any searchText?
+    if(this.state.searchText !== '') {
+      //If so, filter the notes
+      let filteredNotes = this.state.notes.filter(note => {
+        let doesTitleMatch = note.title.includes(this.state.searchText.toLowerCase());
+
+        let doesContentMatch = note.content.toLowerCase().includes(this.state.searchText.toLowerCase());
+        return doesTitleMatch || doesContentMatch;
+      })
+      return filteredNotes;
+    } else {
+      //it not, return all the notes
+      return this.state.notes;
+    }
+    
+    
+  }
+
 
   _getSelectedNote = () => {
     let theNote = this.state.notes.find(
